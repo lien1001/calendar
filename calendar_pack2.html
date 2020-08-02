@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Perpetual Canlendar</title>
+	<style type="text/css">
+		.list{
+			display:flex;flex-wrap:wrap;
+			width:720px;
+			/*text-align:left;*/
+		}
+		.list>.date{
+			width:100px;height:50px;
+		}
+		.list>.date:hover{
+			background-color: #999999;
+		}
+		.list>.fadeout{
+			opacity:0.2;
+		}
+		.list>.rest{
+			font-style: italic;
+			font-weight: bold;
+			color: red;
+		}
+		.btn{
+			width:5px;
+			font-weight: bold;
+			font-size: 20px;
+			border: 1px solid #999999;
+			border-radius: 10px;
+			padding: 5px;
+		}
+		.btn:hover{
+			background-color: #bbbbbb;
+		}
+		.list>.rest:hover{
+			opacity: 0.8;
+			color: blue;
+			font-size: 20px;
+		}
+		.list>.holiday:hover{
+			opacity: 0.8;
+			color: red;
+			font-size: 20px;
+		}
+		.list>.test {
+			position: relative;
+			border: 1px solid rgba(0,0,0,0.5);
+			transition: all 0.5s linear;
+			}
+
+			.list>.test:hover {
+			border-radius: 25px;
+			transition: all 0.5s linear;    
+			}
+		.list>.date>.holi{
+			color: #ff6600;
+		}
+		/*.week{
+			display:flex;flex-wrap:wrap;
+			width:100px;height:50px;
+		}
+	*/
+
+	</style>
+</head>
+<body>
+	<div>
+		<span onclick="cal1.prevY();" class='btn'>◀◀</span>
+		<span onclick="cal1.prevM();" class='btn'>◀</span>
+		<span onclick="cal1.backToday();" class='btn'>Today</span>
+		<span onclick="cal1.nextM();" class='btn'>▶</span>
+		<span onclick="cal1.nextY();" class='btn'>▶▶</span>
+	</div>
+
+	<hr/>
+
+	<!-- <div >日</div><div >一</div><div >二</div><div >三</div><div >四</div><div >五</div><div >六</div> -->
+	<div id='week' class='list'>
+		<!-- <div>日</div> -->
+	</div>
+	<script>
+		// let week = ['日','一','二','三','四','五','六'];
+		// let cal_w;
+		// let t = '';
+		// cal_w = document.getElementById('week');
+		// console.log(week[0]+week[1]);
+		// for(let i; i<week.length; i++){
+		// 	t += '<div>' + week[i] + '</div>';
+		// 	console.log('1',t);
+		// 	console.log(i);
+		// }
+		// cal_w.innerHTML = "<div id='week' class='week date'>日</div><div id='week' class='week date'>一</div><div id='week' class='week date'>二</div><div id='week' class='week date'>三</div><div id='week' class='week date'>四</div><div id='week' class='week date'>五</div><div id='week' class='week date'>六</div>";
+		// console.log(t);
+		// function text(){
+		// 	// let t = '';
+		// 	for(let i; i<week.length; i++){
+		// 		// t += '<div>' + week[i] + '</div>';
+		// 		t +=  i;
+				// console.log(t);
+		// 		alert('aaa');
+		// 	}
+		// 	// return t;
+		// 	// console.log(text());
+		// }
+		// console.log(t);
+		// text();
+		// cal_w.innerHTML = t;
+		// window.onload = function(){
+		// 	text();
+		// }
+	</script>
+	<div id='cal-1'></div>
+	<hr/>
+	<div id='cal-2'></div>
+	<script type="text/javascript">
+		let nowTime;
+		let holiday2020_list = [
+		'0101元旦', '0123春節','0124春節','0125春節','0126春節','0127春節','0128春節','0129春節',
+		'0228和平紀念日',
+		'0404兒童節','0405清明節',
+		'0501勞動節','0509母親節',
+		'0625端午節',
+		'0808父親節',
+		'0928教師節',
+		'1001中秋節', '1010國慶日' 
+		];
+		// console.log(holiday_list);
+		// console.log(holiday_list[0][0]);
+		class Canlendar{
+			constructor(container){
+				this.container = container;
+				this.state = {
+					current: new Date()
+				};
+				this.render();
+				nowTime = this.state.current.getTime();
+			}
+
+			render(){
+				let head = document.createElement('h2');
+				head.textContent = this.state.current.getFullYear() + " / " + (this.state.current.getMonth()+1);
+				console.log(head);
+				let cal_w;
+				cal_w = document.createElement('week');
+				cal_w.className += ' list';
+				cal_w.innerHTML = "<div id='week' class='week date'>日</div><div id='week' class='week date'>一</div><div id='week' class='week date'>二</div><div id='week' class='week date'>三</div><div id='week' class='week date'>四</div><div id='week' class='week date'>五</div><div id='week' class='week date'>六</div>";
+				// let t = '';
+				// for(let i; i<7; i++){
+				// 	t += cal_w[i];
+				// 	console.log[i];
+				// }
+				let list = document.createElement('div');
+				list.className = 'list';
+				list.innerHTML = "";
+				// console.log(t);
+				// console.log(cal_w);
+
+				let firstDate = new Date(this.state.current.getFullYear(), this.state.current.getMonth(), 1);
+				let date = new Date(firstDate.getFullYear(), firstDate.getMonth(), 1);
+				date.setDate(date.getDate()-date.getDay());
+				// console.log(date.getDate()-date.getDay());
+
+				while(date < firstDate){
+					this.renderDate(date, list);
+					date.setDate(date.getDate()+1);
+				}
+				while(date.getMonth() === this.state.current.getMonth()){
+					this.renderDate(date, list);
+					date.setDate(date.getDate()+1);
+				}
+				while(date.getDay() > 0){
+					this.renderDate(date, list);
+					date.setDate(date.getDate()+1);
+				}
+				this.container.innerHTML = "";
+				this.container.appendChild(head);
+				this.container.appendChild(cal_w);
+				this.container.appendChild(list);
+
+			}
+			renderDate(date, list){
+				let cell = document.createElement('div');
+				cell.className = 'date' + (date.getMonth()===this.state.current.getMonth()?"":" fadeout");
+				if(date.getDay() == 0 || date.getDay() == 6){
+					cell.className += " rest";
+				}else if(date.getMonth() == 6 && date.getDate() == 14){
+					cell.textContent = date.getDate();
+					cell.innerHTML += "<br/>" + "<span>" + "Wed" + "</span>";
+					// cell.className += " three";
+					cell.className += " holiday";
+					// cell.id = "rest";
+				}
+				cell.textContent = date.getDate();
+				
+				for(let i=0; i<holiday2020_list.length; i++){
+					let MM;
+					let day;
+					MM = parseInt(holiday2020_list[i][0]+holiday2020_list[i][1]);
+					day = parseInt(holiday2020_list[i][2]+holiday2020_list[i][3])
+					if(MM == date.getMonth()+1 && day == date.getDate()){
+						let text ='';
+						console.log(holiday2020_list[15].length);
+						for(let t=4;t<(holiday2020_list[i].length); t++){
+							text += holiday2020_list[i][t];
+						}
+						cell.innerHTML += "<br/>" + "<span class='holi'>" + text + "</span>";
+						cell.id += "test";
+						cell.className += " holiday";
+						let test = document.getElementById = 'test';		
+					}
+				}
+
+				// cell.textContent = date.getDate();
+				list.appendChild(cell);
+			}
+
+			prevM(){
+				this.state.current.setMonth(this.state.current.getMonth()-1);
+				this.render();
+			}
+			nextM(){
+				this.state.current.setMonth(this.state.current.getMonth()+1);
+				this.render();
+			}
+			prevY(){
+				this.state.current.setMonth(this.state.current.getMonth()-12);
+				this.render();
+			}
+			nextY(){
+				this.state.current.setMonth(this.state.current.getMonth()+12);
+				this.render();
+			}
+			backToday(){
+			    this.state.current.setTime(nowTime);
+			    this.render();
+			}
+
+		}
+		let cal1 = new Canlendar(document.querySelector('#cal-1'));
+	</script>
+</body>
+ <footer>
+        © Lien <br>
+        <a href="https://sites.google.com/d/1_J_nX2Y0LvAQVysU2V4e2gICBWmBLdTd/p/1axe37krZErCfJnerulpO3UyworY8ziNb/edit">Contact</a>
+        <!-- <a href="https://github.com/soyaine/JS_Calendar">Github<img src=""></a> -->
+        <!-- <a href="http://www.jianshu.com/p/4fea34254dff">过程收获</a> -->
+    </footer>
+</html>
