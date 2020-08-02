@@ -7,7 +7,7 @@
 	<style type="text/css">
 		.list{
 			display:flex;flex-wrap:wrap;
-			width:720px;
+			width:760px;
 			font-family: Microsoft JhengHei;
 			/*line-height: 15px;*/
 			/*text-align:left;*/
@@ -15,6 +15,8 @@
 		.list>.date{
 			width:100px;height:60px;
 			line-height: 15px;
+			border-radius: 10px;
+			padding: 3px;
 		}
 			.list>.date:hover{
 				background-color: #999999;
@@ -60,24 +62,12 @@
 			opacity: 0.8;
 			color: red;
 			font-size: 20px;
-		}	
-		
-	/*	.list>.test {
-			position: relative;
-			border: 1px solid rgba(0,0,0,0.5);
-			transition: all 0.5s linear;
-			}
-
-			.list>.test:hover {
-			border-radius: 25px;
-			transition: all 0.5s linear;    
-			}
-	*/
-		/*.week{
+		}
+		.week{
 			display:flex;flex-wrap:wrap;
 			width:100px;height:50px;
 		}
-	*/
+	
 
 	</style>
 </head>
@@ -134,6 +124,17 @@
 		let nowTime;
 		let holiday2020_list = [
 			{dd:'0101',event:'元旦'},
+			{dd:'0214',event:'情人節'},
+			{dd:'0228',event:'和平紀念日'},
+			{dd:'0404',event:'兒童節'},
+			{dd:'0405',event:'清明節'},
+			{dd:'0501',event:'勞動節'},
+			{dd:'0808',event:'父親節'},
+			{dd:'0928',event:'教師節'},
+			{dd:'1010',event:'國慶日'},
+			{dd:'1031',event:'萬聖節'},
+			{dd:'1225',event:'聖誕節'},
+			{dd:'1225',event:'行憲紀念日'},
 			{dd:'0111',event:'投票日'},
 			{dd:'0123',event:'春節'},
 			{dd:'0124',event:'除夕'},
@@ -143,30 +144,56 @@
 			{dd:'0128',event:'初四'},
 			{dd:'0129',event:'初五'},
 			{dd:'0208',event:'元宵節'},
-			{dd:'0214',event:'情人節'},
-			{dd:'0228',event:'和平紀念日'},
-			{dd:'0404',event:'兒童節'},
-			{dd:'0405',event:'清明節'},
-			{dd:'0501',event:'勞動節'},
 			{dd:'0510',event:'母親節'},
 			{dd:'0625',event:'端午節'},
 			{dd:'0626',event:'調整休假日'},
-			{dd:'0808',event:'父親節'},
 			{dd:'0825',event:'七夕'},
 			{dd:'0902',event:'中元節'},
-			{dd:'0928',event:'教師節'},
 			{dd:'1001',event:'中秋節'},
 			{dd:'1002',event:'調整休假日'},
-			{dd:'1010',event:'國慶日'},
-			{dd:'1031',event:'萬聖節'},
+			{dd:'1126',event:'感恩節'},
 			{dd:'1221',event:'冬至'},
-			{dd:'1225',event:'聖誕節'},
-			{dd:'1225',event:'行憲紀念日'},
 		];
 		let workday2020_list = [
 			{dd:'0215',event:'補班'},
 			{dd:'0620',event:'補班'},
 			{dd:'0926',event:'補班'},
+		];
+		let holiday2021_list = [
+			{dd:'0101',event:'元旦'},
+			{dd:'0214',event:'情人節'},
+			{dd:'0228',event:'和平紀念日'},
+			{dd:'0404',event:'兒童節'},
+			{dd:'0405',event:'清明節'},
+			{dd:'0501',event:'勞動節'},
+			{dd:'0808',event:'父親節'},
+			{dd:'0928',event:'教師節'},
+			{dd:'1031',event:'萬聖節'},
+			{dd:'1225',event:'聖誕節'},
+			{dd:'1225',event:'行憲紀念日'},
+			{dd:'0210',event:'春節'},
+			{dd:'0211',event:'除夕'},
+			{dd:'0212',event:'初一'},
+			{dd:'0213',event:'初二'},
+			{dd:'0214',event:'初三'},
+			{dd:'0215',event:'初四'},
+			{dd:'0216',event:'初五'},
+			{dd:'0226',event:'元宵節'},
+			{dd:'0510',event:'母親節'},
+			{dd:'0612',event:'端午節'},
+			{dd:'0614',event:'調整休假日'},
+			{dd:'0814',event:'七夕'},
+			{dd:'0822',event:'中元節'},
+			{dd:'0921',event:'中秋節'},
+			{dd:'0920',event:'調整休假日'},
+			{dd:'1010',event:'國慶日'},
+			{dd:'1011',event:'調整休假日'},
+			{dd:'1125',event:'感恩節'},
+			{dd:'1221',event:'冬至'},	
+		];
+		let workday2021_list = [
+			{dd:'0220',event:'補班'},
+			{dd:'0911',event:'補班'},
 		];
 
 		class Canlendar{
@@ -177,12 +204,13 @@
 				};
 				this.render();
 				nowTime = this.state.current.getTime();
+				console.log(nowTime);
 			}
 
 			render(){
 				let head = document.createElement('h2');
 				head.textContent = this.state.current.getFullYear() + " / " + (this.state.current.getMonth()+1);
-				console.log(head);
+				// console.log(head);
 				let cal_w;
 				cal_w = document.createElement('week');
 				cal_w.className += ' list';
@@ -224,11 +252,7 @@
 			renderDate(date, list){
 				let cell = document.createElement('div');
 				cell.className = 'date' + (date.getMonth()===this.state.current.getMonth()?"":" fadeout");
-				// if(date.getDay() == 0 || date.getDay() == 6){
-				// 	cell.className += " rest";
-				// }
-				// cell.textContent = date.getDate();
-
+				cell.className += (date.getTime()===nowTime?" Today":"");
 				let check_day;
 			
 				if(date.getMonth()+1 < 10){
@@ -244,18 +268,31 @@
 						check_day = (date.getMonth()+1) + '' + date.getDate();
 					}
 				}
-				// console.log(workday2020_list.length);
-				// console.log(workday2020_list[2].dd);
-				for(let i=0; i<workday2020_list.length;i++){
-					// console.log('check',check_day);
-					if(check_day == workday2020_list[i].dd){
-						cell.className += " work";
-						console.log('work', workday2020_list[i].dd);
-						alert('aaa');
-					}else{
-						if(date.getDay() == 0 || date.getDay() == 6){
-							cell.className += " rest";
-							break;
+				
+				if(date.getFullYear() == 2020){
+					if(date.getDay() == 0 || date.getDay() == 6){
+								cell.className += " rest";
+					}
+					for(let i=0; i<workday2020_list.length;i++){
+						// console.log('check',check_day);
+						if(check_day == workday2020_list[i].dd){
+							let classVal = cell.getAttribute("class");
+							classVal = classVal.replace("rest","");
+							cell.setAttribute('class',classVal);
+						}
+					}
+				}
+				if(date.getFullYear() == 2021){
+					for(let i=0; i<workday2021_list.length;i++){
+						// console.log('check',check_day);
+						if(check_day == workday2021_list[i].dd){
+							cell.className += " work";
+							console.log('work', workday2021_list[i].dd);
+						}else{
+							if(date.getDay() == 0 || date.getDay() == 6){
+								cell.className += " rest";
+								continue;
+							}
 						}
 					}
 				}
@@ -276,6 +313,21 @@
 							cell.innerHTML += "<br/>" + "<span class='fa fa-child'>" + workday2020_list[i].event + "</span>";
 							// cell.className += " workday";
 							// cell.className += " fa fa-child";
+						}
+					}
+				}
+				if(date.getFullYear() == 2021){
+					for(let i=0;i<holiday2021_list.length;i++){
+						if(check_day == holiday2021_list[i].dd){
+							cell.innerHTML += "<br/>" + "<span class='holi'>" + holiday2021_list[i].event + "</span>";
+							cell.className += " holiday";
+						}
+					}
+				}
+				if(date.getFullYear() == 2021){
+					for(let i=0;i<workday2021_list.length;i++){
+						if(check_day == workday2021_list[i].dd){
+							cell.innerHTML += "<br/>" + "<span class='fa fa-child'>" + workday2021_list[i].event + "</span>";
 						}
 					}
 				}
@@ -310,7 +362,5 @@
  <footer>
         © Lien <br>
         <a href="https://sites.google.com/d/1_J_nX2Y0LvAQVysU2V4e2gICBWmBLdTd/p/1axe37krZErCfJnerulpO3UyworY8ziNb/edit">Contact</a>
-        <!-- <a href="https://github.com/soyaine/JS_Calendar">Github<img src=""></a> -->
-        <!-- <a href="http://www.jianshu.com/p/4fea34254dff">过程收获</a> -->
     </footer>
 </html>
